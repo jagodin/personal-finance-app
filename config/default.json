@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://jgodin:phbPmfpxYAeBdZKY@financify-drqqg.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret": "mysecrettoken"
+}
