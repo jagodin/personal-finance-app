@@ -9,7 +9,7 @@ import {
     Box
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { register, login } from '../../actions/authActions';
+import { register, login, loadUser } from '../../actions/authActions';
 import PropTypes from 'prop-types';
 
 // styles
@@ -19,7 +19,14 @@ import useStyles from './styles';
 import google from '../../images/google.svg';
 import { Redirect } from 'react-router-dom';
 
-const Login = ({ register, login, isAuthenticated }, { tab = 0 }) => {
+const Login = ({
+    register,
+    login,
+    loadUser,
+    isAuthenticated,
+    tab = 0,
+    errors
+}) => {
     var classes = useStyles();
 
     // Hooks
@@ -33,32 +40,27 @@ const Login = ({ register, login, isAuthenticated }, { tab = 0 }) => {
 
     const { name, email, password, password2 } = formData;
 
+    if (isAuthenticated) {
+        return <Redirect to="/app/dashboard" />;
+    }
+
     const onChange = e =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const registerUser = async e => {
-        console.log('Register123');
         e.preventDefault();
-        if (password !== password2) {
-            console.error('Passwords do not matcg');
-        } else {
-            register({ name, email, password, password2 });
-        }
+        register({ name, email, password, password2 });
     };
 
     const loginUser = async e => {
         e.preventDefault();
-        login({ email, password });
+        await login({ email, password });
+        await loadUser();
     };
-
-    if (isAuthenticated) {
-        return <Redirect to="/dashboard" />;
-    }
 
     return (
         <Grid
             container
-            spacing={1}
             direction="row"
             justify="center"
             alignItems="center"
@@ -147,7 +149,11 @@ const Login = ({ register, login, isAuthenticated }, { tab = 0 }) => {
                                     >
                                         Login
                                     </Button>
-                                    <Button color="primary" size="large">
+                                    <Button
+                                        color="primary"
+                                        size="large"
+                                        style={{ textTransform: 'capitalize' }}
+                                    >
                                         Forgot Password?
                                     </Button>
                                 </div>
@@ -272,11 +278,13 @@ const Login = ({ register, login, isAuthenticated }, { tab = 0 }) => {
 
 Login.propTypes = {
     register: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
+    isAuthenticated: PropTypes.bool,
+    errors: PropTypes.array
 };
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    errors: state.auth.errors
 });
 
-export default connect(mapStateToProps, { register, login })(Login);
+export default connect(mapStateToProps, { register, login, loadUser })(Login);

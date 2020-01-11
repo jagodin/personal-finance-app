@@ -1,8 +1,9 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Landing from './pages/landing/Landing';
 import Login from './pages/login/Login';
-import Navbar from './components/layout/navbar/Navbar';
-import Routes from './components/routing/Routes';
+import PrivateRoute from './components/routing/PrivateRoute';
+import Layout from './components/layout/Layout';
 
 // Redux
 import { Provider } from 'react-redux';
@@ -23,13 +24,16 @@ const App = () => {
     return (
         <Provider store={store}>
             <Router>
-                <Fragment>
-                    <Navbar />
-                    <Switch>
-                        <Route exact path="/" component={Login} />
-                        <Route component={Routes} />
-                    </Switch>
-                </Fragment>
+                <Switch>
+                    <PrivateRoute path="/app" component={Layout} />
+                    <Route exact path="/" component={Landing} />
+                    <Route exact path="/login" component={Login} />
+                    <Route
+                        exact
+                        path="/register"
+                        render={props => <Login {...props} tab={1} />}
+                    />
+                </Switch>
             </Router>
         </Provider>
     );

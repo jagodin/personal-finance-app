@@ -1,16 +1,19 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import Dashboard from '../../pages/dashboard/Dashboard';
-import PrivateRoute from './PrivateRoute';
-import Login from '../../pages/login/Login';
+import Header from '../../components/header/Header';
+import Sidebar from '../../components/sidebar/Sidebar';
 
 const Routes = () => {
     return (
-        <Switch>
-            <Route exact path="/login" component={Login} />
-            <PrivateRoute exact path="/dashboard" component={Dashboard} />
-        </Switch>
+        <>
+            <Header />
+            <Sidebar />
+            <Switch>
+                <Route exact path="/app/dashboard" component={Dashboard} />
+            </Switch>
+        </>
     );
 };
 
-export default Routes;
+export default withRouter(Routes);

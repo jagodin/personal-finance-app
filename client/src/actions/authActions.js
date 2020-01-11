@@ -13,9 +13,7 @@ import {
 
 // Load user
 export const loadUser = () => async dispatch => {
-    if (localStorage.token) {
-        setAuthToken(localStorage.token);
-    }
+    setAuthToken(localStorage.token);
 
     try {
         const res = await axios.get('/api/auth');
@@ -59,7 +57,7 @@ export const register = ({
             errors.forEach(error => console.error(error.msg));
         }
 
-        dispatch({ type: REGISTER_FAIL });
+        dispatch({ type: REGISTER_FAIL, payload: errors });
     }
 };
 
@@ -86,7 +84,7 @@ export const login = ({ email, password }) => async dispatch => {
             errors.forEach(error => console.error(error.msg));
         }
 
-        dispatch({ type: LOGIN_FAIL });
+        dispatch({ type: LOGIN_FAIL, payload: errors });
     }
 };
 
