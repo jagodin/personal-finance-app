@@ -37,7 +37,8 @@ export default makeStyles(theme => ({
         }
     },
     moreButton: {
-        margin: -theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginBottom: -theme.spacing(1),
         padding: 0,
         width: 40,
         height: 40,
@@ -48,10 +49,11 @@ export default makeStyles(theme => ({
         }
     },
     cachedIcon: {
-        margin: -theme.spacing(1),
+        marginBottom: -theme.spacing(1),
         padding: 0,
         width: 40,
         height: 40,
+        borderRadius: '50%',
         color: theme.palette.text.hint,
         '&:hover': {
             backgroundColor: theme.palette.primary.main,

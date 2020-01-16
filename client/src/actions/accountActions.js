@@ -8,6 +8,7 @@ import {
     GET_TRANSACTIONS,
     TRANSACTIONS_LOADING,
     GET_BALANCES,
+    UPDATE_BALANCE,
     BALANCES_LOADING
 } from './types';
 
@@ -32,30 +33,29 @@ export const addAccount = plaidData => dispatch => {
 
 // Delete account
 export const deleteAccount = plaidData => dispatch => {
-    if (window.confirm('Are you sure you want to remove this account?')) {
-        const id = plaidData.id;
-        const newAccounts = plaidData.accounts.filter(
-            account => account._id !== id
-        );
-        axios
-            .delete(`/api/plaid/accounts/${id}`)
-            .then(res =>
-                dispatch({
-                    type: DELETE_ACCOUNT,
-                    payload: id
-                })
-            )
-            .then(newAccounts ? dispatch(getTransactions(newAccounts)) : null)
-            .catch(err => console.log(err));
-    }
+    //if (window.confirm('Are you sure you want to remove this account?')) {
+    const id = plaidData;
+
+    axios
+        .delete(`/api/plaid/accounts/${id}`)
+        .then(res =>
+            dispatch({
+                type: DELETE_ACCOUNT,
+                payload: id
+            })
+        )
+        .then(dispatch(getAccounts()))
+        //.then(newAccounts ? dispatch(getTransactions(newAccounts)) : null)
+        .catch(err => console.log(err));
+    //}
 };
 
 // Get all accounts for specific user
 export const getAccounts = () => (dispatch, getState) => {
-    const isCacheValid = checkCacheValid(getState, 'plaid');
+    /* const isCacheValid = checkCacheValid(getState, 'plaid');
     if (isCacheValid) {
         return null;
-    }
+    } */
 
     axios
         .get('/api/plaid/accounts')
@@ -112,12 +112,12 @@ export const setTransactionsLoading = () => {
     };
 };
 
-// Get balance
+// Get all account balances for a user
 export const getBalances = plaidData => (dispatch, getState) => {
-    const isCacheValid = checkCacheValid(getState, 'balance');
+    /* const isCacheValid = checkCacheValid(getState, 'balance');
     if (isCacheValid) {
         return null;
-    }
+    } */
 
     dispatch(setBalancesLoading());
 
@@ -129,12 +129,13 @@ export const getBalances = plaidData => (dispatch, getState) => {
                 payload: res.data
             })
         )
-        .catch(err =>
+        .catch(err => {
+            console.error(err);
             dispatch({
                 type: GET_BALANCES,
                 payload: null
-            })
-        );
+            });
+        });
 };
 
 // Balances loading
@@ -142,4 +143,26 @@ export const setBalancesLoading = () => {
     return {
         type: BALANCES_LOADING
     };
+};
+
+// Get a specific account balance based on Account _id
+export const getBalance = plaidData => dispatch => {
+    dispatch(setBalancesLoading());
+
+    axios
+        .get('/api/plaid/accounts/balance/' + plaidData)
+        .then(res => {
+            dispatch({
+                type: UPDATE_BALANCE,
+                payload: res.data,
+                _id: plaidData
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            dispatch({
+                type: UPDATE_BALANCE,
+                payload: null
+            });
+        });
 };

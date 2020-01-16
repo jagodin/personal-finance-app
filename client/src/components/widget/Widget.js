@@ -15,13 +15,16 @@ import classnames from 'classnames';
 import useStyles from './styles';
 
 export default function Widget({
+    id,
     children,
     title,
     noBodyPadding,
     bodyClass,
     header,
-    widgetMenu,
     refresh,
+    widgetMenu,
+    refreshAccount,
+    removeAccount,
     ...props
 }) {
     const classes = useStyles();
@@ -47,24 +50,40 @@ export default function Widget({
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                {refresh ? (
-                                    <CachedIcon
-                                        color="primary"
-                                        classes={{ root: classes.cachedIcon }}
-                                    ></CachedIcon>
-                                ) : null}
-                                {widgetMenu ? (
-                                    <IconButton
-                                        color="primary"
-                                        classes={{ root: classes.moreButton }}
-                                        aria-owns="widget-menu"
-                                        aria-haspopup="true"
-                                        onClick={() => setMoreMenuOpen(true)}
-                                        buttonRef={setMoreButtonRef}
-                                    >
-                                        <MoreIcon />
-                                    </IconButton>
-                                ) : null}
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}
+                                >
+                                    {refresh ? (
+                                        <IconButton
+                                            color="primary"
+                                            classes={{
+                                                root: classes.cachedIcon
+                                            }}
+                                            onClick={() => refresh(id)}
+                                        >
+                                            <CachedIcon />
+                                        </IconButton>
+                                    ) : null}
+                                    {widgetMenu ? (
+                                        <IconButton
+                                            color="primary"
+                                            classes={{
+                                                root: classes.moreButton
+                                            }}
+                                            aria-owns="widget-menu"
+                                            aria-haspopup="true"
+                                            onClick={() =>
+                                                setMoreMenuOpen(true)
+                                            }
+                                            buttonRef={setMoreButtonRef}
+                                        >
+                                            <MoreIcon />
+                                        </IconButton>
+                                    ) : null}
+                                </div>
                             </Grid>
                         </Grid>
                     )}
@@ -86,9 +105,10 @@ export default function Widget({
                     onClose={() => setMoreMenuOpen(false)}
                     disableAutoFocusItem
                 >
-                    {widgetMenu.map(item => (
-                        <MenuItem key={item.id}>{item.item}</MenuItem>
-                    ))}
+                    <MenuItem>Edit</MenuItem>
+                    <MenuItem onClick={() => removeAccount(id)}>
+                        Delete
+                    </MenuItem>
                 </Menu>
             ) : null}
         </div>

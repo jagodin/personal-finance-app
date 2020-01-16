@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { Grid, List, Divider } from '@material-ui/core';
+import { Grid, List, Divider, Button } from '@material-ui/core';
 import PlaidLinkButton from 'react-plaid-link-button';
 import { connect } from 'react-redux';
 
 import {
     getAccounts,
     addAccount,
-    getBalances
-} from '../../actions/accountAcctions';
+    getBalances,
+    deleteAccount,
+    getBalance
+} from '../../actions/accountActions';
 
 // components
 import PageTitle from '../../components/pagetitle/PageTitle';
@@ -17,21 +19,20 @@ import WidgetItem from '../../components/widget-item/WidgetItem';
 // styles
 import makeStyles from './styles';
 
-const widgetMenu = [
-    { id: 1, item: 'Edit' },
-    { id: 2, item: 'Delete' }
-];
-
 function LinkedAccounts({
     addAccount,
     getAccounts,
+    deleteAccount,
     plaid,
+    auth,
     balance,
     accounts,
-    getBalances
+    getBalances,
+    getBalance
 }) {
     const classes = makeStyles();
 
+    // Get accounts on render
     useEffect(() => {
         async function fetchAccounts() {
             await getAccounts();
@@ -41,20 +42,19 @@ function LinkedAccounts({
     }, []);
 
     // Get balances if accounts changes
-    // This is getting called on render, but there are no accounts
-    // Then it gets called again when accounts is in state
-    // The null response is received after, causing an error
     const isInitialMount = useRef(true);
 
     useEffect(() => {
         async function fetchBalances() {
-            await getBalances(plaid.accounts);
+            await getBalances({ userId: auth.user._id });
         }
 
         if (isInitialMount.current) {
             isInitialMount.current = false;
         } else {
-            fetchBalances();
+            if (plaid.accounts.length != 0) {
+                fetchBalances();
+            }
         }
     }, [plaid.accounts]);
 
@@ -86,11 +86,13 @@ function LinkedAccounts({
                     balance.balances.map(institution => (
                         <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
                             <Widget
+                                id={institution._id}
                                 title={institution.institutionName}
                                 bodyClass={classes.fullHeightBody}
                                 className={classes.card}
-                                widgetMenu={widgetMenu}
-                                refresh
+                                refresh={id => getBalance(id)}
+                                removeAccount={id => deleteAccount(id)}
+                                widgetMenu
                             >
                                 <div>
                                     <Divider
@@ -121,11 +123,14 @@ function LinkedAccounts({
 
 const mapStateToProps = state => ({
     plaid: state.plaid,
-    balance: state.balance
+    balance: state.balance,
+    auth: state.auth
 });
 
 export default connect(mapStateToProps, {
     addAccount,
     getAccounts,
-    getBalances
+    getBalances,
+    deleteAccount,
+    getBalance
 })(LinkedAccounts);

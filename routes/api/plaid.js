@@ -43,6 +43,7 @@ router.post('/accounts/add', auth, (req, res) => {
                 ACCESS_TOKEN = exchangeResponse.access_token;
                 ITEM_ID = exchangeResponse.item_id;
 
+                console.log(exchangeResponse);
                 // Check if account already exists for specific user
                 Account.findOne({
                     userId: req.user.id,
@@ -75,6 +76,7 @@ router.post('/accounts/add', auth, (req, res) => {
 // @desc Delete account with given id
 // @access Private
 router.delete('/accounts/:id', auth, (req, res) => {
+    console.log('Delete');
     Account.findById(req.params.id).then(account => {
         // Delete account
         account.remove().then(() => res.json({ success: true }));
@@ -93,66 +95,107 @@ router.get('/accounts', auth, (req, res) => {
 // @route POST api/plaid/accounts/transactions
 // @desc Fetch transactions from past 30 days from all linked accounts
 // @access Private
+// @req.body = { userId: 'u'serId' }
 router.post('/accounts/transactions', auth, (req, res) => {
     const now = moment();
     const today = now.format('YYYY-MM-DD');
     const thirtyDaysAgo = now.subtract(30, 'days').format('YYYY-MM-DD');
 
-    let transactions = [];
+    Account.find({ userId: req.body.userId })
+        .then(accounts => {
+            if (accounts) {
+                let transactions = [];
 
-    const accounts = req.body;
+                accounts.forEach(function(account) {
+                    ACCESS_TOKEN = account.accessToken;
+                    const institutionName = account.institutionName;
 
-    if (accounts) {
-        accounts.forEach(function(account) {
-            ACCESS_TOKEN = account.accessToken;
-            const institutionName = account.institutionName;
+                    client
+                        .getTransactions(ACCESS_TOKEN, thirtyDaysAgo, today)
+                        .then(response => {
+                            transactions.push({
+                                accountName: institutionName,
+                                transactions: response.transactions
+                            });
 
-            client
-                .getTransactions(ACCESS_TOKEN, thirtyDaysAgo, today)
-                .then(response => {
-                    transactions.push({
-                        accountName: institutionName,
-                        transactions: response.transactions
-                    });
-
-                    if (transactions.length === accounts.length) {
-                        res.json(transactions);
-                    }
-                })
-                .catch(err => console.log(err));
-        });
-    }
+                            if (transactions.length === accounts.length) {
+                                res.json(transactions);
+                            }
+                        })
+                        .catch(err => console.log(err));
+                });
+            }
+        })
+        .catch(err => console.log(err));
 });
 
 // @route POST api/plaid/accounts/balance
-// @desc Get balance of account
+// @desc Get all account balances of a user
 // @access Private
+// @req.body = { userId: 'userId' }
 router.post('/accounts/balance', auth, (req, res) => {
-    let balances = [];
+    Account.find({ userId: req.body.userId })
+        .then(accounts => {
+            let balances = [];
 
-    const accounts = req.body;
+            if (accounts) {
+                accounts.forEach(function(account) {
+                    ACCESS_TOKEN = account.accessToken;
+                    const _id = account._id;
+                    const institutionName = account.institutionName;
 
-    if (accounts) {
-        accounts.forEach(function(account) {
-            ACCESS_TOKEN = account.accessToken;
-            const accountId = account.id;
-            const institutionName = account.institutionName;
+                    client
+                        .getBalance(ACCESS_TOKEN)
+                        .then(response => {
+                            balances.push({
+                                institutionName,
+                                _id, // Use this id to get access token from Accounts model
+                                accounts: response.accounts
+                            });
 
-            client
-                .getBalance(ACCESS_TOKEN, accountId)
-                .then(response => {
-                    balances.push({
-                        institutionName,
-                        accounts: response.accounts
-                    });
+                            if (balances.length === accounts.length) {
+                                res.json(balances);
+                            }
+                        })
+                        .catch(err => console.log(err));
+                });
+            } else {
+                res.json({ msg: 'No accounts were found.' });
+            }
+        })
+        .catch(err => console.log(err));
+});
 
-                    if (balances.length === accounts.length) {
-                        res.json(balances);
-                    }
-                })
-                .catch(err => console.log(err));
-        });
-    }
+// @route GET api/plaid/accounts/balance/:id
+// @desc Get balance of a specific Account _id
+// @access Private
+router.get('/accounts/balance/:id', auth, (req, res) => {
+    Account.findById(req.params.id)
+        .then(account => {
+            let balance = [];
+
+            if (account) {
+                ACCESS_TOKEN = account.accessToken;
+                const _id = account._id;
+                const institutionName = account.institutionName;
+
+                client
+                    .getBalance(ACCESS_TOKEN)
+                    .then(response => {
+                        balance.push({
+                            institutionName,
+                            _id, // Use this id to get access token from Accounts model
+                            accounts: response.accounts
+                        });
+
+                        res.json(balance);
+                    })
+                    .catch(err => console.log(err));
+            } else {
+                res.json({ msg: 'No account was found.' });
+            }
+        })
+        .catch(err => console.log(err));
 });
 
 module.exports = router;
