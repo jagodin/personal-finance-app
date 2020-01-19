@@ -40,22 +40,20 @@ Configure `./config/default.json`
 
 ## Screenshots
 
-https://github.com/jagodin/personal-finance-app/blob/master/images/dashboard.JPG
-
 Dashboard and Profile Menu
-![Dashboard and Profile Menu](/blob/master/images/dashboard.jpg)
+![Dashboard and Profile Menu](https://user-images.githubusercontent.com/17988743/72690028-09d40380-3ae6-11ea-8478-9d65f0d08dcb.JPG)
 
 Linked Accounts and Balances
-![Linked Accounts and Balances](/blob/master/images/linked-accounts.jpg)
+![Linked Accounts and Balances](https://user-images.githubusercontent.com/17988743/72690034-26703b80-3ae6-11ea-8d82-cd152aeba8f7.JPG)
 
 Transactions
-![Transactions](/blob/master/images/transactions.jpg)
+![Transactions](https://user-images.githubusercontent.com/17988743/72690047-3e47bf80-3ae6-11ea-920e-23ef0e32081e.JPG)
 
 Plaid Link
-![Plaid Link](/blob/master/images/plaid-link.jpg)
+![Plaid Link](https://user-images.githubusercontent.com/17988743/72690044-2e2fe000-3ae6-11ea-8592-563974a0230a.JPG)
 
 Responsive Dashboard
-![Responsive Dashboard](/blob/master/images/responsive.jpg)
+![Responsive Dashboard](https://user-images.githubusercontent.com/17988743/72690045-3556ee00-3ae6-11ea-861d-b6ca09cffb90.JPG)
 
 ## Future Enhancements
 
