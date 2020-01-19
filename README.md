@@ -41,19 +41,19 @@ Configure `./config/default.json`
 ## Screenshots
 
 Dashboard and Profile Menu
-![Dashboard and Profile Menu](/images/dashboard.jpeg)
+![Dashboard and Profile Menu](/images/dashboard.jpg?raw=true)
 
 Linked Accounts and Balances
-![Linked Accounts and Balances](/images/linked-accounts.jpeg)
+![Linked Accounts and Balances](/images/linked-accounts.jpg?raw=true)
 
 Transactions
-![Transactions](/images/transactions.jpeg)
+![Transactions](/images/transactions.jpg?raw=true)
 
 Plaid Link
-![Plaid Link](/images/plaid-link.jpeg)
+![Plaid Link](/images/plaid-link.jpg?raw=true)
 
 Responsive Dashboard
-![Responsive Dashboard](/images/responsive.jpeg)
+![Responsive Dashboard](/images/responsive.jpg?raw=true)
 
 ## Future Enhancements
 
