@@ -22,5 +22,8 @@ export default makeStyles(theme => ({
     },
     header: {
         marginBottom: '34px'
+    },
+    plaidButton: {
+        border: 'none'
     }
 }));

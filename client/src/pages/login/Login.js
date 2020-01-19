@@ -12,6 +12,8 @@ import { connect } from 'react-redux';
 import { register, login, loadUser } from '../../actions/authActions';
 import PropTypes from 'prop-types';
 
+import logo from './logo.jpeg';
+
 // styles
 import useStyles from './styles';
 
@@ -66,9 +68,7 @@ const Login = ({
             alignItems="center"
             className={classes.container}
         >
-            <Box className={classes.logoContainer} sm={6} md={6} lg={6}>
-                <span>Logo</span>
-            </Box>
+            <Box className={classes.logoContainer} sm={6} md={6} lg={6}></Box>
             <Box className={classes.signInContainer} sm={6} md={6} lg={6}>
                 <div className={classes.form}>
                     <Tabs

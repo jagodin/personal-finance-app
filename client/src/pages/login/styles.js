@@ -1,10 +1,14 @@
 import { makeStyles } from '@material-ui/styles';
+import logo from './logo.jpeg';
 
 export default makeStyles(theme => ({
     container: {
         height: '100vh'
     },
     logoContainer: {
+        backgroundImage: `url(${logo})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
         backgroundColor: 'grey',
         height: '100%',
         width: '50%',

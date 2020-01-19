@@ -2,13 +2,12 @@ import React from 'react';
 import { Typography, Grid, ListItemIcon, ListItem } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { Link } from 'react-router-dom';
-import classNames from 'classnames';
-import BudgetProgress from '../budget-progress/BudgetProgress';
+import moment from 'moment';
 
 // styles
 import useStyles from './styles';
 
-const WidgetItem = ({ title, label, value, linkTo, icon, ...props }) => {
+const WidgetItem = ({ title, label, value, linkTo, icon, date, ...props }) => {
     const classes = useStyles();
 
     return (
@@ -23,7 +22,12 @@ const WidgetItem = ({ title, label, value, linkTo, icon, ...props }) => {
                 <Grid justify="space-between" container alignItems="center">
                     <Grid item>
                         <Typography variant="h6">{title}</Typography>
-                        <Typography variant="body1">{label}</Typography>
+                        <Typography variant="body1">
+                            {label}
+                            {date
+                                ? ' / ' + moment(date).format('MMM DD, YYYY')
+                                : null}
+                        </Typography>
                     </Grid>
                     <Grid item>
                         <Grid container>

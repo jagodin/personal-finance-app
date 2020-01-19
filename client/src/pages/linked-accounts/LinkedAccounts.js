@@ -3,9 +3,9 @@ import {
     Grid,
     List,
     Divider,
-    Button,
     Box,
-    CircularProgress
+    CircularProgress,
+    Button
 } from '@material-ui/core';
 import PlaidLinkButton from 'react-plaid-link-button';
 import { connect } from 'react-redux';
@@ -88,43 +88,92 @@ function LinkedAccounts({
                         product: ['transactions'],
                         onSuccess: handleOnSuccess
                     }}
-                ></PlaidLinkButton>
+                    buttonProps={{ className: classes.plaidButton }}
+                >
+                    <Button color="primary" variant="contained">
+                        Link new account
+                    </Button>
+                </PlaidLinkButton>
             </Grid>
             <Grid container spacing={3}>
                 {balance.balances.length != 0 ? (
-                    balance.balances.map(institution => (
-                        <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
-                            <Widget
-                                id={institution._id}
-                                title={institution.institutionName}
-                                bodyClass={classes.fullHeightBody}
-                                className={classes.card}
-                                refresh={id => getBalance(id)}
-                                removeAccount={id => deleteAccount(id)}
-                                widgetMenu
-                            >
-                                <div>
-                                    <Divider
-                                        className={classes.accountsDivider}
-                                    />
-                                    <List>
-                                        {institution.accounts.map(account => (
-                                            <WidgetItem
-                                                key={account.account_id}
-                                                title={account.name}
-                                                label={account.official_name}
-                                                value={`${getSymbolFromCurrency(
-                                                    account.balances
-                                                        .iso_currency_code
-                                                )} ${account.balances.current.toLocaleString()}`}
-                                                {...account}
-                                            />
-                                        ))}
-                                    </List>
-                                </div>
-                            </Widget>
-                        </Grid>
-                    ))
+                    balance.balances.length == 1 ? (
+                        balance.balances.map(institution => (
+                            <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
+                                <Widget
+                                    id={institution._id}
+                                    title={institution.institutionName}
+                                    bodyClass={classes.fullHeightBody}
+                                    className={classes.card}
+                                    refresh={id => getBalance(id)}
+                                    removeAccount={id => deleteAccount(id)}
+                                    widgetMenu
+                                >
+                                    <div>
+                                        <Divider
+                                            className={classes.accountsDivider}
+                                        />
+                                        <List>
+                                            {institution.accounts.map(
+                                                account => (
+                                                    <WidgetItem
+                                                        key={account.account_id}
+                                                        title={account.name}
+                                                        label={
+                                                            account.official_name
+                                                        }
+                                                        value={`${getSymbolFromCurrency(
+                                                            account.balances
+                                                                .iso_currency_code
+                                                        )} ${account.balances.current.toLocaleString()}`}
+                                                        {...account}
+                                                    />
+                                                )
+                                            )}
+                                        </List>
+                                    </div>
+                                </Widget>
+                            </Grid>
+                        ))
+                    ) : (
+                        balance.balances.map(institution => (
+                            <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
+                                <Widget
+                                    id={institution._id}
+                                    title={institution.institutionName}
+                                    bodyClass={classes.fullHeightBody}
+                                    className={classes.card}
+                                    refresh={id => getBalance(id)}
+                                    removeAccount={id => deleteAccount(id)}
+                                    widgetMenu
+                                >
+                                    <div>
+                                        <Divider
+                                            className={classes.accountsDivider}
+                                        />
+                                        <List>
+                                            {institution.accounts.map(
+                                                account => (
+                                                    <WidgetItem
+                                                        key={account.account_id}
+                                                        title={account.name}
+                                                        label={
+                                                            account.official_name
+                                                        }
+                                                        value={`${getSymbolFromCurrency(
+                                                            account.balances
+                                                                .iso_currency_code
+                                                        )} ${account.balances.current.toLocaleString()}`}
+                                                        {...account}
+                                                    />
+                                                )
+                                            )}
+                                        </List>
+                                    </div>
+                                </Widget>
+                            </Grid>
+                        ))
+                    )
                 ) : (
                     <div style={{ width: '100%', height: '100%' }}>
                         <Box display="flex" justifyContent="center">

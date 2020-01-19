@@ -50,7 +50,7 @@ function Transactions({
             <Grid container spacing={3}>
                 {transactions.transactions.length != 0 ? (
                     transactions.transactions.map(institution => (
-                        <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
+                        <Grid item xl={12} lg={12} md={12} sm={12} xs={12}>
                             <Widget
                                 //id={institution._id}
                                 title={institution.accountName}
@@ -85,6 +85,7 @@ function Transactions({
                                                                 }
                                                             }
                                                         )}
+                                                        date={transaction.date}
                                                         value={`${getSymbolFromCurrency(
                                                             transaction.iso_currency_code
                                                         )} ${transaction.amount.toLocaleString()}`}

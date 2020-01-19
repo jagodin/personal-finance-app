@@ -1,5 +1,13 @@
-import React, { useState } from 'react';
-import { Grid, Typography, Divider, List } from '@material-ui/core';
+import React, { useEffect } from 'react';
+import {
+    Grid,
+    Typography,
+    Divider,
+    List,
+    CircularProgress,
+    Button
+} from '@material-ui/core';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -10,6 +18,14 @@ import {
     Tooltip,
     ResponsiveContainer
 } from 'recharts';
+import PlaidLinkButton from 'react-plaid-link-button';
+import moment from 'moment';
+
+import {
+    getTransactions,
+    getAccounts,
+    addAccount
+} from '../../actions/accountActions';
 
 // components
 import PageTitle from '../../components/pagetitle/PageTitle';
@@ -51,45 +67,6 @@ const accountsData = [
     }
 ];
 
-const transactionsData = [
-    {
-        id: 1,
-        name: 'Rent',
-        amount: '-$ 1,250.00',
-        cardNumber: 'Paid Dec 1'
-    },
-    {
-        id: 2,
-        name: 'PC Credit',
-        amount: '-$ 255.87',
-        cardNumber: 'Paid Dec 24'
-    },
-    {
-        id: 3,
-        name: 'MASSINES Y.I.G',
-        amount: '-$ 65.63',
-        cardNumber: 'Paid Dec 28'
-    },
-    {
-        id: 4,
-        name: 'BRIDGEHEAD COFF',
-        amount: '-$ 2.89',
-        cardNumber: 'Paid Dec 28'
-    },
-    {
-        id: 5,
-        name: 'LIVE ON ELGIN',
-        amount: '-$ 2.89',
-        cardNumber: 'Paid Dec 29'
-    },
-    {
-        id: 6,
-        name: 'EDC PAY/PAY	',
-        amount: '+$ 1647.48',
-        cardNumber: 'Received Jan 2'
-    }
-];
-
 const budgets = [
     {
         id: 1,
@@ -111,119 +88,290 @@ const budgets = [
     }
 ];
 
-function Dashboard({ auth }) {
+function Dashboard({
+    auth,
+    getTransactions,
+    getAccounts,
+    plaid,
+    transactions,
+    addAccount,
+    balance
+}) {
     const classes = makeStyles();
     const theme = useTheme();
+
+    // Get accounts on render
+    useEffect(() => {
+        async function fetchAccounts() {
+            await getAccounts();
+        }
+
+        fetchAccounts();
+    }, [auth.user]);
+
+    // Get transactions on state.plaid.accounts change
+    useEffect(() => {
+        async function fetchTransactions() {
+            await getTransactions({ userId: auth.user._id });
+        }
+
+        fetchTransactions();
+    }, [plaid.accounts]);
+
+    const getMonthlyTransactionTotal = transactions => {
+        var total = 0;
+
+        transactions.forEach(account => {
+            account.transactions.forEach(transaction => {
+                if (moment(transaction.date).isSame(new Date(), 'month')) {
+                    total += transaction.amount;
+                }
+            });
+        });
+
+        return total.toLocaleString();
+    };
+
+    const getMostRecentTransactions = (transactions, count = 7) => {
+        var allTransactions = [];
+
+        transactions.forEach(account => {
+            allTransactions = account.transactions.concat(allTransactions);
+        });
+
+        allTransactions = allTransactions.slice(1, count);
+
+        return allTransactions.map(transaction => (
+            <WidgetItem
+                key={transaction.transaction_id}
+                label={'Paid ' + moment(transaction.date).format('DD MMM')}
+                value={'$ ' + transaction.amount.toLocaleString()}
+                title={transaction.name}
+            />
+        ));
+    };
+
+    const getAccountBalancesTotal = balances => {};
+
+    const handleOnSuccess = async (token, metadata) => {
+        const plaidData = {
+            public_token: token,
+            metadata: metadata
+        };
+
+        addAccount(plaidData);
+    };
+
     return (
         <>
             <PageTitle title="Dashboard" />
             <Grid container spacing={3} className={classes.contentMargin}>
-                <Grid item lg={6} md={6} sm={12} xs={12}>
-                    <Widget
-                        title="Accounts"
-                        bodyClass={classes.fullHeightBody}
-                        className={classes.card}
-                    >
-                        <div className={classes.accountsContainer}>
-                            <Typography variant="h2">$12, 131.47</Typography>
-                            <Divider className={classes.accountsDivider} />
-                            <ResponsiveContainer width="100%" height={100}>
-                                <LineChart
-                                    data={[
-                                        {
-                                            Amount: 10324.22,
-                                            Month: 'Aug'
-                                        },
-                                        { Amount: 4824.62, Month: 'Sept' },
-                                        { Amount: 11154.63, Month: 'Oct' },
-                                        { Amount: 12624.92, Month: 'Nov' },
-                                        { Amount: 7324.62, Month: 'Dec' }
-                                    ]}
-                                    margin={{
-                                        top: theme.spacing(2),
-                                        left: theme.spacing(2),
-                                        right: theme.spacing(2)
-                                    }}
-                                >
-                                    <XAxis dataKey="Month" interval={0} />
-                                    <YAxis width={30} />
-                                    <Tooltip />
-                                    <Line
-                                        type="natural"
-                                        dataKey="Amount"
-                                        stroke={theme.palette.success.main}
-                                        strokeWidth={2}
-                                        dot
+                {!plaid.accountsLoading && plaid.accounts.length == 0 ? (
+                    <Grid container justify="center" align="center">
+                        <PlaidLinkButton
+                            plaidLinkProps={{
+                                clientName: 'Financify',
+                                key: '4dbff516a54a26c92da118c1dfe2ba',
+                                env: 'sandbox',
+                                product: ['transactions'],
+                                onSuccess: handleOnSuccess
+                            }}
+                            buttonProps={{ className: classes.plaidButton }}
+                        >
+                            <Button color="primary" variant="contained">
+                                Link your bank account
+                            </Button>
+                        </PlaidLinkButton>
+                    </Grid>
+                ) : plaid.accountsLoading ||
+                  transactions.transactionsLoading ? (
+                    <div style={{ width: '100%' }}>
+                        <Grid container justify="center" align="center">
+                            <CircularProgress />
+                        </Grid>
+                    </div>
+                ) : (
+                    <>
+                        <Grid item lg={6} md={6} sm={12} xs={12}>
+                            <Widget
+                                title="Accounts"
+                                bodyClass={classes.fullHeightBody}
+                                className={classes.card}
+                            >
+                                <div className={classes.accountsContainer}>
+                                    <Typography variant="h2">
+                                        $12, 131.47
+                                    </Typography>
+                                    <Divider
+                                        className={classes.accountsDivider}
                                     />
-                                </LineChart>
-                            </ResponsiveContainer>
-                            <Divider className={classes.accountsDivider} />
-                            <List>
-                                {accountsData.map(item => (
-                                    <WidgetItem
-                                        key={item.id}
-                                        title={item.name}
-                                        label={item.cardNumber}
-                                        value={item.amount}
-                                        {...item}
+                                    <ResponsiveContainer
+                                        width="100%"
+                                        height={100}
+                                    >
+                                        <LineChart
+                                            data={[
+                                                {
+                                                    Amount: 10324.22,
+                                                    Month: 'Aug'
+                                                },
+                                                {
+                                                    Amount: 4824.62,
+                                                    Month: 'Sept'
+                                                },
+                                                {
+                                                    Amount: 11154.63,
+                                                    Month: 'Oct'
+                                                },
+                                                {
+                                                    Amount: 12624.92,
+                                                    Month: 'Nov'
+                                                },
+                                                {
+                                                    Amount: 7324.62,
+                                                    Month: 'Dec'
+                                                }
+                                            ]}
+                                            margin={{
+                                                top: theme.spacing(2),
+                                                left: theme.spacing(2),
+                                                right: theme.spacing(2)
+                                            }}
+                                        >
+                                            <XAxis
+                                                dataKey="Month"
+                                                interval={0}
+                                            />
+                                            <YAxis width={30} />
+                                            <Tooltip />
+                                            <Line
+                                                type="natural"
+                                                dataKey="Amount"
+                                                stroke={
+                                                    theme.palette.success.main
+                                                }
+                                                strokeWidth={2}
+                                                dot
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                    <Divider
+                                        className={classes.accountsDivider}
                                     />
-                                ))}
-                            </List>
-                        </div>
-                    </Widget>
-                </Grid>
-                <Grid item lg={6} md={6} sm={12} xs={12}>
-                    <Widget
-                        title="Transactions"
-                        bodyClass={classes.fullHeightBody}
-                        className={classes.card}
-                    >
-                        <div className={classes.accountsContainer}>
-                            <Typography variant="h2">$1 811.50</Typography>
-                            <Divider className={classes.accountsDivider} />
-                            <List>
-                                {transactionsData.map(item => (
-                                    <WidgetItem
-                                        key={item.id}
-                                        title={item.name}
-                                        label={item.cardNumber}
-                                        value={item.amount}
-                                        {...item}
+                                    <List>
+                                        {accountsData.map(item => (
+                                            <WidgetItem
+                                                key={item.id}
+                                                title={item.name}
+                                                label={item.cardNumber}
+                                                value={item.amount}
+                                                {...item}
+                                            />
+                                        ))}
+                                    </List>
+                                    <Grid
+                                        container
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <Button
+                                            color="primary"
+                                            to="/app/linked-accounts/"
+                                            component={Link}
+                                            underline="none"
+                                        >
+                                            View All Accounts
+                                        </Button>
+                                    </Grid>
+                                </div>
+                            </Widget>
+                        </Grid>
+                        <Grid item lg={6} md={6} sm={12} xs={12}>
+                            <Widget
+                                title="Transactions"
+                                bodyClass={classes.fullHeightBody}
+                                className={classes.card}
+                            >
+                                <div className={classes.accountsContainer}>
+                                    <Typography variant="h2">
+                                        {getMonthlyTransactionTotal(
+                                            transactions.transactions
+                                        )}
+                                    </Typography>
+                                    <Divider
+                                        className={classes.accountsDivider}
                                     />
-                                ))}
-                            </List>
-                        </div>
-                    </Widget>
-                </Grid>
+                                    <List>
+                                        {getMostRecentTransactions(
+                                            transactions.transactions
+                                        )}
+                                    </List>
 
-                <Grid item lg={12} md={12} sm={12} xs={12}>
-                    <Widget
-                        title="Budgets"
-                        bodyClass={classes.fullHeightBody}
-                        className={classes.card}
-                    >
-                        <div className={classes.accountsContainer}>
-                            <Typography variant="h2">
-                                $ 1,457.13 / 3,304.47
-                            </Typography>
-                            <Divider className={classes.accountsDivider} />
-                            <List>
-                                {budgets.map(budget => (
-                                    <WidgetItem
-                                        key={budget.id}
-                                        title={budget.name}
-                                        label={budget.progress}
-                                        {...budget}
-                                        budgetProgress={{
-                                            budgetTotal: 3,
-                                            budgetUsed: 1
-                                        }}
+                                    <Grid
+                                        container
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <Button
+                                            color="primary"
+                                            to="/app/transactions/"
+                                            component={Link}
+                                            underline="none"
+                                        >
+                                            View All Transactions
+                                        </Button>
+                                    </Grid>
+                                </div>
+                            </Widget>
+                        </Grid>
+
+                        <Grid item lg={12} md={12} sm={12} xs={12}>
+                            <Widget
+                                title="Budgets"
+                                bodyClass={classes.fullHeightBody}
+                                className={classes.card}
+                            >
+                                <div className={classes.accountsContainer}>
+                                    <Typography variant="h2">
+                                        $ 1,457.13 / 3,304.47
+                                    </Typography>
+                                    <Divider
+                                        className={classes.accountsDivider}
                                     />
-                                ))}
-                            </List>
-                        </div>
-                    </Widget>
-                </Grid>
+                                    <List>
+                                        {budgets.map(budget => (
+                                            <WidgetItem
+                                                key={budget.id}
+                                                title={budget.name}
+                                                label={budget.progress}
+                                                {...budget}
+                                                budgetProgress={{
+                                                    budgetTotal: 3,
+                                                    budgetUsed: 1
+                                                }}
+                                            />
+                                        ))}
+                                    </List>
+                                    <Grid
+                                        container
+                                        align="center"
+                                        justify="center"
+                                    >
+                                        <Button
+                                            color="primary"
+                                            to="/app/budgets/"
+                                            component={Link}
+                                            underline="none"
+                                        >
+                                            View All Budgets
+                                        </Button>
+                                    </Grid>
+                                </div>
+                            </Widget>
+                        </Grid>
+                    </>
+                )}
+                {}
             </Grid>
         </>
     );
@@ -234,7 +382,14 @@ Dashboard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    auth: state.auth
+    plaid: state.plaid,
+    transactions: state.transactions,
+    auth: state.auth,
+    plaid: state.plaid
 });
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps, {
+    getTransactions,
+    getAccounts,
+    addAccount
+})(Dashboard);

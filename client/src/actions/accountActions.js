@@ -57,6 +57,8 @@ export const getAccounts = () => (dispatch, getState) => {
         return null;
     } */
 
+    dispatch(setAccountsLoading());
+
     axios
         .get('/api/plaid/accounts')
         .then(res =>

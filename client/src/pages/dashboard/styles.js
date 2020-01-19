@@ -18,5 +18,8 @@ export default makeStyles(theme => ({
     },
     contentMargin: {
         marginTop: theme.spacing(4)
+    },
+    plaidButton: {
+        border: 'none'
     }
 }));
