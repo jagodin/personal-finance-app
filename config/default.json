@@ -1,4 +1,4 @@
 {
-    "mongoURI": "mongodb+srv://jgodin:phbPmfpxYAeBdZKY@financify-drqqg.mongodb.net/test?retryWrites=true&w=majority",
-    "jwtSecret": "mysecrettoken"
+    "mongoURI": "YOUR_MONGO_URI",
+    "jwtSecret": "YOUR_SECRET_STRING"
 }
