@@ -83,7 +83,7 @@ function LinkedAccounts({
                 <PlaidLinkButton
                     plaidLinkProps={{
                         clientName: 'Financify',
-                        key: '4dbff516a54a26c92da118c1dfe2ba',
+                        key: 'YOUR_PLAID_KEY',
                         env: 'sandbox',
                         product: ['transactions'],
                         onSuccess: handleOnSuccess
