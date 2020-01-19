@@ -41,19 +41,19 @@ Configure `./config/default.json`
 ## Screenshots
 
 Dashboard and Profile Menu
-![alt text](https://github.com/jagodin/personal-finance-app/images/dashboard.jpeg)
+![Dashboard and Profile Menu](./images/dashboard.jpeg)
 
 Linked Accounts and Balances
-![alt text](https://github.com/jagodin/personal-finance-app/images/linked-accounts.jpeg)
+![Linked Accounts and Balances](./images/linked-accounts.jpeg)
 
 Transactions
-![alt text](https://github.com/jagodin/personal-finance-app/images/transactions.jpeg)
+![Transactions](./images/transactions.jpeg)
 
 Plaid Link
-![alt text](https://github.com/jagodin/personal-finance-app/images/plaid-link.jpeg)
+![Plaid Link](./images/plaid-link.jpeg)
 
 Responsive Dashboard
-![alt text](https://github.com/jagodin/personal-finance-app/images/responsive.jpeg)
+![Responsive Dashboard](./images/responsive.jpeg)
 
 ## Future Enhancements
 
