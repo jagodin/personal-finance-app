@@ -10,6 +10,7 @@ import {
     Person as AccountIcon
 } from '@material-ui/icons';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 import { useTheme } from '@material-ui/styles';
 import { withRouter } from 'react-router-dom';
@@ -39,6 +40,12 @@ const structure = [
         label: 'Linked Accounts',
         link: '/app/linked-accounts',
         icon: <AccountBalanceIcon />
+    },
+    {
+        id: 2,
+        label: 'Budgets',
+        link: '/app/budgets',
+        icon: <AttachMoneyIcon />
     },
     { id: 3, type: 'divider' },
     {

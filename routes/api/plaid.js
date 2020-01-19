@@ -95,7 +95,7 @@ router.get('/accounts', auth, (req, res) => {
 // @route POST api/plaid/accounts/transactions
 // @desc Fetch transactions from past 30 days from all linked accounts
 // @access Private
-// @req.body = { userId: 'u'serId' }
+// @req.body = { userId: 'userId' }
 router.post('/accounts/transactions', auth, (req, res) => {
     const now = moment();
     const today = now.format('YYYY-MM-DD');

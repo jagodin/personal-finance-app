@@ -1,7 +1,16 @@
 import React, { useEffect, useRef } from 'react';
-import { Grid, List, Divider, Button } from '@material-ui/core';
+import {
+    Grid,
+    List,
+    Divider,
+    Button,
+    Box,
+    CircularProgress
+} from '@material-ui/core';
 import PlaidLinkButton from 'react-plaid-link-button';
 import { connect } from 'react-redux';
+
+import getSymbolFromCurrency from 'currency-symbol-map';
 
 import {
     getAccounts,
@@ -82,7 +91,7 @@ function LinkedAccounts({
                 ></PlaidLinkButton>
             </Grid>
             <Grid container spacing={3}>
-                {balance.balances ? (
+                {balance.balances.length != 0 ? (
                     balance.balances.map(institution => (
                         <Grid item xl={6} lg={12} md={12} sm={12} xs={12}>
                             <Widget
@@ -104,7 +113,10 @@ function LinkedAccounts({
                                                 key={account.account_id}
                                                 title={account.name}
                                                 label={account.official_name}
-                                                value={account.balances.current}
+                                                value={`${getSymbolFromCurrency(
+                                                    account.balances
+                                                        .iso_currency_code
+                                                )} ${account.balances.current.toLocaleString()}`}
                                                 {...account}
                                             />
                                         ))}
@@ -114,7 +126,11 @@ function LinkedAccounts({
                         </Grid>
                     ))
                 ) : (
-                    <div>Loading...</div>
+                    <div style={{ width: '100%', height: '100%' }}>
+                        <Box display="flex" justifyContent="center">
+                            <CircularProgress />
+                        </Box>
+                    </div>
                 )}
             </Grid>
         </>

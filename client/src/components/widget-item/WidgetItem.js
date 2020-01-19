@@ -8,15 +8,7 @@ import BudgetProgress from '../budget-progress/BudgetProgress';
 // styles
 import useStyles from './styles';
 
-const WidgetItem = ({
-    title,
-    label,
-    value,
-    linkTo,
-    icon,
-    budgetProgress,
-    ...props
-}) => {
+const WidgetItem = ({ title, label, value, linkTo, icon, ...props }) => {
     const classes = useStyles();
 
     return (
@@ -33,14 +25,6 @@ const WidgetItem = ({
                         <Typography variant="h6">{title}</Typography>
                         <Typography variant="body1">{label}</Typography>
                     </Grid>
-                    {budgetProgress ? (
-                        <Grid item>
-                            <BudgetProgress
-                                budgetUsed={budgetProgress.budgetUsed}
-                                budgetTotal={budgetProgress.budgetTotal}
-                            />
-                        </Grid>
-                    ) : null}
                     <Grid item>
                         <Grid container>
                             <Typography variant="h6">{value}</Typography>

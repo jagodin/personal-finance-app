@@ -44,7 +44,7 @@ export const deleteAccount = plaidData => dispatch => {
                 payload: id
             })
         )
-        .then(dispatch(getAccounts()))
+        //.then(dispatch(getAccounts()))
         //.then(newAccounts ? dispatch(getTransactions(newAccounts)) : null)
         .catch(err => console.log(err));
     //}
@@ -82,10 +82,10 @@ export const setAccountsLoading = () => {
 
 // Get Transactions
 export const getTransactions = plaidData => (dispatch, getState) => {
-    const isCacheValid = checkCacheValid(getState, 'transactions');
-    if (isCacheValid) {
-        return null;
-    }
+    // const isCacheValid = checkCacheValid(getState, 'transactions');
+    // if (isCacheValid) {
+    //     return null;
+    // }
 
     dispatch(setTransactionsLoading());
 
