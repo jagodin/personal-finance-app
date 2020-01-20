@@ -40,20 +40,29 @@ Configure `./config/default.json`
 
 ## Screenshots
 
+Login/Registration Page
+![Login/Registration Page](https://user-images.githubusercontent.com/17988743/72691879-98e91780-3af6-11ea-8125-c8e25a172663.JPG)
+
+
 Dashboard and Profile Menu
 ![Dashboard and Profile Menu](https://user-images.githubusercontent.com/17988743/72690028-09d40380-3ae6-11ea-8478-9d65f0d08dcb.JPG)
+
 
 Linked Accounts and Balances
 ![Linked Accounts and Balances](https://user-images.githubusercontent.com/17988743/72690034-26703b80-3ae6-11ea-8d82-cd152aeba8f7.JPG)
 
+
 Transactions
 ![Transactions](https://user-images.githubusercontent.com/17988743/72690047-3e47bf80-3ae6-11ea-920e-23ef0e32081e.JPG)
+
 
 Plaid Link
 ![Plaid Link](https://user-images.githubusercontent.com/17988743/72690044-2e2fe000-3ae6-11ea-8592-563974a0230a.JPG)
 
+
 Responsive Dashboard
 ![Responsive Dashboard](https://user-images.githubusercontent.com/17988743/72690045-3556ee00-3ae6-11ea-861d-b6ca09cffb90.JPG)
+
 
 ## Future Enhancements
 
