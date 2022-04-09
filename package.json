@@ -23,7 +23,7 @@
         "is-empty": "^1.2.0",
         "jsonwebtoken": "^8.5.1",
         "logrocket": "^1.0.6",
-        "moment": "^2.24.0",
+        "moment": "^2.29.2",
         "mongoose": "^5.8.1",
         "plaid": "^4.3.0",
         "react-dom": "^16.12.0",
