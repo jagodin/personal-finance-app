@@ -16,7 +16,7 @@
         "axios": "^0.21.1",
         "bcryptjs": "^2.4.3",
         "config": "^3.2.4",
-        "express": "^4.17.1",
+        "express": "^4.17.3",
         "express-validator": "^6.3.0",
         "gravatar": "^1.8.0",
         "http-proxy-middleware": "^0.20.0",
