@@ -21,7 +21,7 @@
         "gravatar": "^1.8.0",
         "http-proxy-middleware": "^0.20.0",
         "is-empty": "^1.2.0",
-        "jsonwebtoken": "^8.5.1",
+        "jsonwebtoken": "^9.0.0",
         "logrocket": "^1.0.6",
         "moment": "^2.24.0",
         "mongoose": "^5.8.1",
